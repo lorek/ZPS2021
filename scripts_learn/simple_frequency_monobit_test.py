@@ -13,6 +13,7 @@ import pandas as pd
 # Sample usage: 
 
 # python  scripts_learn/simple_frequency_monobit_test.py --input-file results/lcg1_numbers.pkl 
+# python scripts_learn/simple_frequency_monobit_test.py --input-file results/mt_numbers_int.pkl 
 
 def ParseArguments():
     parser = argparse.ArgumentParser(description="Project")
