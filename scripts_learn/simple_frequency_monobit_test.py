@@ -37,6 +37,10 @@ M= numbers_info['Modulus']
 numbers = numbers_info['numbers']
 
 
+print("M = ", M)
+print("5 first numbers: ", numbers[:5])
+
+
 # W tym przykladzie numbers to wektor liczb calkowitych z przedzialu 0,..,M-1,
 # do TEGO TESTU musimy je zamienic na ciag bitow 0,1 i je zsumowac
 
