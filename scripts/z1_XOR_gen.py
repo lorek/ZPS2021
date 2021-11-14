@@ -48,7 +48,7 @@ def XORG(n: int, M: int, seed: str) -> list:
         bits.append(xor(bits[i], bits[-1]))
     
     bits = "".join(map(str, bits))
-    print(f"Generated {len(bits)} pseudo-random bits.\nBits are now being converted to {n} integers ({M} bits per integer).\n...")
+    print(f"Generated {len(bits)} pseudo-random bits.\nBits are now being converted to {n} integers from 0 ... {2**M - 1} ({M} bits per integer).\n...")
     numbers = bits_to_ints(bits, n)
     
     return numbers
@@ -64,9 +64,8 @@ if __name__ == '__main__':
     stop = time()
     print(f'Generated {n} numbers in {(stop-start):.3}s.') 
 
-    data = {'PRNG': 'XORG', 'n' : n, 'seed': seed, 'numbers': numbers}          
+    data = {'PRNG': 'XORG', 'n' : n, 'max_int': 2**M - 1, 'seed': seed, 'numbers': numbers}          
     with open(output_file, 'wb') as out: 
         pickle.dump(data, out)
 
     print(f"Results are saved in {output_file}.")
-        
