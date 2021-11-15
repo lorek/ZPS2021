@@ -17,10 +17,11 @@ import pandas as pd
 from scipy.stats import chi2
 from z1_convert import ints_to_floats
 from math import ceil
+from time import perf_counter as time
 
 def ParseArguments():
     parser = argparse.ArgumentParser(description = "Spacing test")
-    parser.add_argument('--input-file', default = "results/z1_XORG_numbers.pkl", required = False, help = 'Pickle file with generated numbers (default: %(default)s)')
+    parser.add_argument('--input-file', default = "results/z1_XORG_numbers_int.pkl", required = False, help = 'Pickle file with generated numbers (default: %(default)s)')
     parser.add_argument('--alpha', default = "0", required = False, help = 'Beginning of interval (default: %(default)s)')
     parser.add_argument('--delta', default = "0.5", required = False, help = 'Width of interval (default: %(default)s)')
     
@@ -100,5 +101,8 @@ if __name__ == '__main__':
     print(f"Numbers are from 0, ... {max_int}.\nRunning spacing test...\n")
 
     # Run test and show result
+    start = time()
     result = spacing_test(numbers, max_int, alpha, delta)
+    time = time() - start
     print(f'p-value: {result}')
+    print(f'running time: {time:.3}s')

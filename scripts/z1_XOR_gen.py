@@ -20,9 +20,9 @@ from z1_convert import *
 
 def ParseArguments():
     parser = argparse.ArgumentParser(description = "XOR Psudorandom number generator")
-    parser.add_argument('--n', default = "10000", required = False, help = 'nr of generated numbers (default: %(default)s)')
+    parser.add_argument('--n', default = "1000000", required = False, help = 'nr of generated numbers (default: %(default)s)')
     parser.add_argument('--M', default = "8", required = False, help = 'generate numbers in range 0, ... 2^M - 1 (default M: %(default)s)')
-    parser.add_argument('--output-file', default = "results/z1_XORG_numbers.pkl", required = False, help='output file (default: %(default)s)')
+    parser.add_argument('--output-file', default = "results/z1_XORG_numbers_int.pkl", required = False, help='output file (default: %(default)s)')
     parser.add_argument('--seed-file', default = "data/z1_XORG_seed.txt", required = False, help = 'File storing seed for generator (default: %(default)s)')
     args = parser.parse_args()
 
