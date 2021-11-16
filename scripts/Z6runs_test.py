@@ -7,7 +7,7 @@ import pickle
 import pandas as pd
 
 def ParseArguments():
-    parser = argparse.ArgumentParser(description="Frequency Test")
+    parser = argparse.ArgumentParser(description="Runs Test")
     #parser.add_argument('--n', default="100", required=False, help='nr of generated numbers (default: %(default)s)')
     parser.add_argument('--input-file', default="generated_numbers.pkl", required=False, help='output file (default: %(default)s)')
     args = parser.parse_args()
@@ -28,7 +28,9 @@ print("n = ", n)
 print("M = ", M)
 print("5 first numbers: ", numbers[:5])
 
+
 from math import sqrt, erfc
+
 def changeNumbers(numbers):
     e = []
     for i in range(0,len(numbers)):
@@ -39,6 +41,10 @@ def changeNumbers(numbers):
 
 e = changeNumbers(numbers)
 
+
+from math import sqrt, erfc
+
+#print(changeNumbers(numbers))
 #e = "1100100100001111110110101010001000100001011010001100001000110100110001001100011001100010100010111000"
 
 
