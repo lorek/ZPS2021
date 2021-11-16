@@ -29,7 +29,7 @@ def LCG(n):
     seed = int(time.time())
     a = 7 ** 5
     c = 0
-    M = 2 ** 31 - 1
+    M = 2 ** 31
     result = [seed % M]
     for i in range(1, n):
         result.append((a * result[i-1] + c) % M)
