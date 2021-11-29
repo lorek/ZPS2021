@@ -14,14 +14,14 @@ input_file = ParseArguments()
 numbers_info = pd.read_pickle(input_file)
 
 n = int(numbers_info['n']) #ilość liczb 
+M = int(numbers_info['Modulus'])
+numbers_length = (M-1).bit_length() #długość liczb binarnie
 numbers = numbers_info['numbers'] #liczby (pseudolosowe)
-binary_numbers = list() 
-
+binary_numbers = list()
 for i in range(0, n):
-    binary_numbers = binary_numbers + list(bin(numbers[i]))[2:] #zamiana liczb na postać binarną i ustawienie ich w ciąg
+    binary_numbers = binary_numbers + list([0] * (numbers_length - len(bin(numbers[i])) + 2)) + list(bin(numbers[i]))[2:] #zamiana liczb na postać binarną i ustawienie ich w ciąg
 
 partial_sums = [0] * len(binary_numbers)
-
 binary_numbers = list(map(lambda x: (int(2*int(x)-1)), binary_numbers)) #zamiana 0 -> -1 i 1 -> 1 w ciągu binarnym
 partial_sums[0] = binary_numbers[0]
 
