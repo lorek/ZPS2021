@@ -22,11 +22,12 @@ from time import perf_counter as time
 def ParseArguments():
     parser = argparse.ArgumentParser(description = "Spacing test")
     parser.add_argument('--input-file', default = "results/z1_XORG_numbers_int.pkl", required = False, help = 'Pickle file with generated numbers (default: %(default)s)')
+    parser.add_argument('--output-file', default = "test_results/spacing_XORG.txt", required = False, help = 'Where results will be stored? If not provided, results are not saved. (default: %(default)s)')
     parser.add_argument('--alpha', default = "0", required = False, help = 'Beginning of interval (default: %(default)s)')
     parser.add_argument('--delta', default = "0.5", required = False, help = 'Width of interval (default: %(default)s)')
     
     args = parser.parse_args()
-    return args.input_file, float(args.alpha), float(args.delta)
+    return args.input_file, args.output_file, float(args.alpha), float(args.delta)
 
 def get_spacings(floats: np.ndarray, a: float, b: float) -> list: # b > a
     """Calculate spacings for spacing test with numbering starting from 1 (C_1, ... C_k)"""
@@ -91,7 +92,7 @@ if __name__ == '__main__':
     test_functions()
 
     # Read data and show information about tested numbers
-    input_file, alpha, delta = ParseArguments()
+    input_file, output_file, alpha, delta = ParseArguments()
     print(f'Reading numbers from {input_file}...')
     data = pd.read_pickle(input_file)
     numbers = data.pop('numbers') 
@@ -104,5 +105,20 @@ if __name__ == '__main__':
     start = time()
     result = spacing_test(numbers, max_int, alpha, delta)
     time = time() - start
+
+    summary = {
+        "test": "spacing",
+        "input_file": input_file,
+        "alpha": alpha,
+        "delta": delta,
+        "p-value": result
+    }
     print(f'p-value: {result}')
     print(f'running time: {time:.3}s')
+
+    # Save summary
+    if (output_file):
+        out = open(output_file, "w")
+        out.write(str(summary))
+        print(f"\nSummary of test can be found in {output_file}.")
+        out.close()
