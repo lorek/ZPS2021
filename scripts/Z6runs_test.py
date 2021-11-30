@@ -31,21 +31,25 @@ print("5 first numbers: ", numbers[:5])
 
 from math import sqrt, erfc
 
+N = 8
 def changeNumbers(numbers):
     e = []
     for i in range(0,len(numbers)):
-        a = str(bin(numbers[i]))
-        e += a[2:]
-        e = ''.join(e)
-    return e
+        a = np.binary_repr(numbers[i],N)
+        e.append(list(a))
+
+    e1 = []
+    for i in range(0,len(e)):
+        for j in range(0,len(e[i])):
+            e1 += e[i][j]
+    return e1
 
 e = changeNumbers(numbers)
+#print(e)
 
 
 from math import sqrt, erfc
 
-#print(changeNumbers(numbers))
-#e = "1100100100001111110110101010001000100001011010001100001000110100110001001100011001100010100010111000"
 
 
 def r(e):
