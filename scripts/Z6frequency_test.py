@@ -5,6 +5,7 @@ from scipy.stats import norm
 import argparse
 import pickle
 import pandas as pd
+from scipy.stats import chisquare
 
 def ParseArguments():
     parser = argparse.ArgumentParser(description="Frequency Test")
@@ -22,7 +23,7 @@ prng_info = numbers_info['PRNG']
 n=int(numbers_info['n'])
 M= numbers_info['Modulus']
 numbers = numbers_info['numbers']
-
+#numbers=[11100101]*50+ [234324234]*50
 print("PRNG = ", prng_info)
 print("n = ", n)
 print("M = ", M)
@@ -32,27 +33,29 @@ print("5 first numbers: ", numbers[:5])
 from math import sqrt, erfc
 
 def changeNumbers(numbers):
-    e = []
+    max_number=max(numbers)
     for i in range(0,len(numbers)):
-        a = str(bin(numbers[i]))
-        e += a[2:]
-        e = ''.join(e)
-    return e
+        numbers[i]= numbers[i]/M
+    return numbers
 
 e = changeNumbers(numbers)
+L = 2**8
 
-def freq_test(e):
-    n = len(e)
-    sn = 0
-    for i in range(len(e)):
-        if int(e[i]) == 1:
-            sn += 1
-        elif int(e[i]) == 0:
-            sn += -1
-    test_stat = abs(sn) / sqrt(n)
-    p_value = erfc(test_stat / sqrt(2))
+def freq_test(numbers):
+    print(numbers[1:5])
+    a = []
+    for i in range(0, L):
+        a.append(0)
 
-    return p_value
+    for i in range(0, L):
+        for j in range(0, len(numbers)):
+            if numbers[j] >= i / L and numbers[j] < (i + 1) / L:
+                a[i] = a[i] + 1
+    print(a)
+    print(chisquare(a,ddof=1))
+    p_value = chisquare(a,ddof=1)[1]
+    test_stat = chisquare(a,ddof=1)[0]
+    return p_value, test_stat
 
 def israndom(p_value):
     if p_value < 0.01:
@@ -60,9 +63,6 @@ def israndom(p_value):
     if p_value >= 0.01:
         return True
 
-print("P-value: ", freq_test(e))
-print("Is random?: ", israndom((freq_test(e))))
-
-
-
+a = freq_test(numbers)
+print(a)
 
