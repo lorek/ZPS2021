@@ -31,25 +31,30 @@ def ParseArguments():
 
 def get_spacings(floats: np.ndarray, a: float, b: float) -> list: # b > a
     """Calculate spacings for spacing test with numbering starting from 1 (C_1, ... C_k)"""
-    Cs = [0]
-    for i, x in enumerate(floats):
+    Cs = []
+    space = 0
+    for x in floats:
         if x >= a and x <= b:
-            Cs.append(i+1 - Cs[-1]) # how big is step from last index  ind such that floats[ind] falls into [a,b]?
+            Cs.append(space)
+            space = 0
+        else:
+            space += 1
 
-    return Cs[1:]
+    return Cs
 
 def get_bins_counts(Cs: list, s: int) -> np.ndarray:
-    """Return counts of Cs in each of s+1 bins A_1, ... A_s""" # TODO jaki sens ma A_0? Było w skrypcie, ale nie ufam temu więc usunęłam
-    bins = np.zeros((s,), dtype = np.uint8)
+    """Return counts of Cs in each of s+1 bins A_0, ... A_s"""
+    bins = np.zeros((s+1,), dtype = np.uint8)
     for c in Cs:
         if c > s-1:
             bins[-1] += 1
         else:
-            bins[c-1] += 1
+            bins[c] += 1
     return bins
 
 def spacing_test(numbers: np.ndarray, max_int: int, alpha: float, delta: float) -> float:
     """Run spacing test on numbers from 0 ... `max_int` with parameters `alpha`, `delta` and return computed p-value."""
+    # Setup: read params and convert numbers
     if alpha > 1 or alpha < 0:
         raise ValueError("Alpha ({alpha}) must be in range [0,1]")
     
@@ -68,11 +73,14 @@ def spacing_test(numbers: np.ndarray, max_int: int, alpha: float, delta: float) 
     # Step 2: Find number of Cs in bins
     Os = get_bins_counts(Cs, s)
 
-    # Step 3: Calculate chi_square statistic
-    n = len(floats)                                           # TODO czy to na pewno ma być len(floats)?
-    ps = np.full(shape = (s,), fill_value = (1-delta)*delta)
-    ps[-1] = 1 - np.sum(ps[:-1])
-    chi_sq = sum((Os - n*ps)**2/ n*ps)
+    # Step 3: Calculate ps array
+    ps = np.apply_along_axis(lambda i: 0.5*(1 - 0.5)**i, 0, np.array(range(s+1))) # fill values for i = 0, ... s
+    ps[-1] = 1 - sum(ps[:-1])                                                     # correct the last term so that all sum up to 1
+    assert (sum(ps) == 1)
+    
+    # Step 4: Calculate chi_square statistic
+    k = len(Cs)
+    chi_sq = sum((Os - k*ps)**2/ k*ps)
 
     # Step 4: Calculate p-value of chi_sq statistic with s degrees of freedom; 
     # p_value = 1 - CDF(test_statistic)
@@ -81,11 +89,12 @@ def spacing_test(numbers: np.ndarray, max_int: int, alpha: float, delta: float) 
     return p_val
 
 def test_functions():
-    fake_numbers = [0.1, 0.2, 0.1, 0.2, 0.4, 0.6, 0.1]
-    assert get_spacings(fake_numbers, 0.3, 0.8) == [5,1]
+    fake_numbers = [0.4, 0.1, 0.2, 0.3, 0.4, 0.1, 0.5]
+    spacings = get_spacings(fake_numbers, 0.3, 0.8)
+    assert spacings == [0,2,0,1]
     
-    fake_Cs = [5,1,1,3,3,2,10,10,9,1,6,6,5,4,5,3,7,8]
-    assert all(get_bins_counts(fake_Cs, 5) == np.array([3,1,3,1,10]))
+    fake_Cs = [0,0,1,2,5,0,1,3,4,6,8,0,2,3]
+    assert all(get_bins_counts(fake_Cs, 5) == np.array([4,2,2,2,1,3]))
 
 if __name__ == '__main__':
     # Check if get_spacings and get_bins_counts work
