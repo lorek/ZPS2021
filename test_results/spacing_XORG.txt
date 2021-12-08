@@ -1,0 +1,1 @@
+{'test': 'spacing', 'input_file': 'results/z1_XORG_numbers_int.pkl', 'alpha': 0.0, 'delta': 0.5, 'p-value': 0.0}
