@@ -66,9 +66,9 @@ def random_exc_test(numbers, M):
 
     J = summary.count(0) - 1
 
-    if J < 500:
+    '''if J < 500:
         raise ValueError("If J < 500, the test is discontinued in order to satisfy the empirical rule for Chi-square "
-                         "computations. Bigger input needed.")
+                         "computations. Bigger input needed.")'''
     # gets list of cycles
     cycles = []
     pos1, pos2 = 0, 0
