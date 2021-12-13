@@ -2,51 +2,92 @@ import scipy.stats as sts
 import argparse
 import pandas as pd
 import numpy as np
+import glob
 
-
-# python  z4_ks_test.py --input-file lcg1_numbers.pkl
 
 def ParseArguments():
     parser = argparse.ArgumentParser(description="Kolmogorow-Smirnow test")
     parser.add_argument('--input-file', default="generated_numbers.pkl", required=False,
-                        help='output file (default: %(default)s)')
+                        help='input .pkl file (default: %(default)s)')
+    parser.add_argument('--input-dir', default="", required=False,
+                        help='input directory with .pkl files (default: %(default)s)')
+    parser.add_argument('--pval-file', default="p-values.csv", required=False,
+                        help='output file with p-values (default: %(default)s)')
     args = parser.parse_args()
 
-    return args.input_file
+    return args.input_file, args.input_dir, args.pval_file
 
 
-def bits_to_decimal(numbers, Mo=10):
-    n = len(numbers)
-    result_list = [""] * ((n // Mo) + 1)
-    for i in range(len(result_list) - 1):
-        for j in range(Mo):
-            result_list[i] += numbers[j]
-        numbers = numbers[Mo:]
-    for i in range(n % Mo):
-        result_list[-1] += numbers[i]
-    return [int(str(element), 2) for element in result_list]
+input_file, input_dir, pval_file = ParseArguments()
 
 
-input_file = ParseArguments()
-numbers_info = pd.read_pickle(input_file)
+def decimal_to_binary(n, M):
+    bits = np.log2(M)
+    binary_number = bin(n)[2:]
+    while len(binary_number) < bits:
+        binary_number = "0" + binary_number
+    return binary_number
 
-n = int(numbers_info['n'])
 
-numbers = numbers_info['numbers'][:10000]
-M = int(numbers_info['Modulus'])
+def converte(numbers, M, N=10):
+    if M > 32:
+        return numbers
+    else:
+        # zamiana na binary
+        bin_string = "".join([decimal_to_binary(num, M) for num in numbers])
+        parts_list = []
+        while len(bin_string) > N:
+            parts_list.append(bin_string[:N])
+            bin_string = bin_string[N:]
+        if len(bin_string) != 0:
+            parts_list.append(bin_string)
+        # na dec again
+        decimal_list = [int(str(n), 2) for n in parts_list]
+        return decimal_list
 
-print("M = ", M)
-print("n = ", n)
 
-print("5 first numbers: ", numbers[:5])
+if input_dir == "":
 
-if M == 2: # nieudana próba przyjmowania binarnego wejścia
-    res = [str(number) for number in numbers]
-    numbers = bits_to_decimal(res)
+    numbers_info = pd.read_pickle(input_file)
 
-numbers = list(map(lambda x: x / M, numbers))
+    prng_info = numbers_info['PRNG']
 
-test = sts.kstest(numbers, cdf="uniform")  # result: (statistic, p-value)
+    n = int(numbers_info['n'])
 
-print("KOLMOGOROW-SMIRNOW TEST results:")
-print("KS statistic = {ks}, p-value = {p}".format(ks=round(test[0], 4), p=round(test[1], 4)))
+    M = numbers_info['Modulus']
+
+    numbers = converte(numbers_info['numbers'], M)
+
+    numbers = list(map(lambda x: x / 2 ** 10, numbers))
+
+    pval = sts.kstest(numbers, cdf="uniform")[1]
+
+    print("pval = ", np.round(pval, 5))
+    pvals = []
+    pvals.append(pval)
+    print("Saving p-value to ", pval_file)
+    df = pd.DataFrame(pvals, columns=["p-value"])
+    df.to_csv(pval_file)
+
+else:
+    print("input_dir = ", input_dir)
+    pvals = []
+    file_list = list((glob.glob(input_dir + "/**.pkl")))
+    file_list.sort()
+    for file_name in file_list:
+        print("Processing file ", file_name, " ...")
+        numbers_info = pd.read_pickle(file_name)
+
+        prng_info = numbers_info['PRNG']
+        n = int(numbers_info['n'])
+        M = numbers_info['Modulus']
+        numbers = converte(numbers_info['numbers'], M)
+
+        numbers = list(map(lambda x: x / M, numbers))
+
+        pval = sts.kstest(numbers, cdf="uniform")[1]
+        pvals.append(pval)
+
+    print("Saving p-values to ", pval_file)
+    df = pd.DataFrame(pvals, columns=["p-value"])
+    df.to_csv(pval_file, index=False)
