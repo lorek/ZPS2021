@@ -1,6 +1,8 @@
 import time
 import argparse
 import pickle
+import pandas as pd
+import numpy as np
 
 
 def ParseArguments():
@@ -10,11 +12,13 @@ def ParseArguments():
     parser.add_argument('-b', default="3", required=False, help='parameter \'b\' in PRNG recursion (default: %(default)s)')
     parser.add_argument('-c', default="1", required=False, help='parameter \'c\' in PRNG recursion (default: %(default)s)')
     parser.add_argument('-M', required=False, help='Modulus \'M\' in PRNG recursion (default: 2^512)')
-    parser.add_argument('--seed', required=False, help='seed in PRNG recursion')
     parser.add_argument('--output-file', default="generated_numbers.pkl", required=False, help='output file (default: %(default)s)')
+    parser.add_argument('--seeds', default="", required=False, help='File (.csv) with seeds (default: %(default)s)')
+    parser.add_argument('--output-dir', default="", required=False, help='Directory to save .pkl files generated with seeds (default: %(default)s)')
+    
     args = parser.parse_args()
 
-    return args.n, args.a, args.b, args.c, args.M, args.seed, args.output_file
+    return args.n, args.a, args.b, args.c, args.M, args.output_file, args.seeds, args.output_dir
 
 def QCG_II_Gen(n, seed, M = 2**512, a = 2, b = 3, c = 1):
     numbers = [0] * n
@@ -25,7 +29,13 @@ def QCG_II_Gen(n, seed, M = 2**512, a = 2, b = 3, c = 1):
     return numbers
 
 
-n, a, b, c, M, s, output_file = ParseArguments()
+n, a, b, c, M, output_file, seeds_file, output_dir = ParseArguments()
+
+if(seeds_file!=""):
+	df_seeds=pd.read_csv(seeds_file)
+	seeds=df_seeds["seeds"].to_numpy()
+else:
+	seeds  = np.array([int(time.time())])
 
 n = int(n)
 a = int(a)
@@ -34,19 +44,40 @@ c = int(c)
 if M:
     M = int(M)
 else: M = 2**512
-if s:
-    s = int(s)
-else: s = int(time.time())
 
-numbers = QCG_II_Gen(n, s, M, a, b, c)
+if(output_dir!=""):
+	output_dir +="/"
 
-if output_file==" ": #jeżeli nie podamy pliku to wypisz liczby w konsoli
-    print("Wygenerowane liczby: \n", numbers)
-else:
-    data = {'PRNG': "QCG II: a="+str(a)+", b="+str(b)+", c="+str(c),
+if len(seeds)==1:
+	qcg2 = QCG_II_Gen(n, seeds[0], M, a, b, c)
+
+	if output_file=="":
+		print("Wygenerowane liczby: \n",qcg2)
+	else:
+		data = {'PRNG': "QCG II: a="+str(a)+", b="+str(b)+", c="+str(c),
             'Modulus' : M,
             'n' : n,
-            'numbers': numbers}
-    data_outfile = open(output_file, 'wb+')
-    pickle.dump(data, data_outfile)
-    print("Wygenerowane liczby zapisano w: ", output_file)
+            'numbers': qcg2}
+					
+		data_outfile = open(output_file, 'wb+')
+		pickle.dump(data, data_outfile)
+		print("Wygenerowane liczby zapisano w: ", output_file)
+		
+else: # jest wiecej seedow	
+	output_file_list = output_file.split(".")
+	output_file_prefix = "".join(output_file_list[:(len(output_file_list)-1)])
+
+	for nr, seed in enumerate(seeds):
+		qcg2 = QCG_II_Gen(n, seed, M, a, b, c)
+		
+		output_file = output_dir+output_file_prefix+"_seed_"+str(nr)+".pkl"
+		
+		data = {'PRNG': "QCG II: a="+str(a)+", b="+str(b)+", c="+str(c),
+                'Modulus' : M,
+                'n' : n,
+                'numbers': qcg2}
+		 
+		data_outfile = open(output_file, 'wb+')
+		pickle.dump(data, data_outfile)
+		
+		print("Saving file nr ",nr,",\t",output_file)
