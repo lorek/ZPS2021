@@ -7,7 +7,6 @@ import pandas as pd
 
 import glob
 
-# for now returns mean of p-values for x /in [-4,4]\{0}
 
 def ParseArguments():
     parser = argparse.ArgumentParser(description="Random excursion test")
@@ -66,7 +65,8 @@ def random_exc_test(numbers, M):
 
     J = summary.count(0) - 1
 
-    '''if J < 500:
+    '''
+    if J < 500:
         raise ValueError("If J < 500, the test is discontinued in order to satisfy the empirical rule for Chi-square "
                          "computations. Bigger input needed.")'''
     # gets list of cycles
@@ -115,7 +115,7 @@ def random_exc_test(numbers, M):
     return [chi_square_values[i][1] for i in range(8)]
 
 
-if input_dir == "":  # one .pkl file
+if input_dir == "":
 
     numbers_info = pd.read_pickle(input_file)
 
@@ -127,16 +127,14 @@ if input_dir == "":  # one .pkl file
 
     numbers = numbers_info['numbers']
 
-    pval = np.mean(random_exc_test(numbers, M))
+    pval = random_exc_test(numbers, M)
 
     print("pval = ", np.round(pval, 5))
-    pvals = []
-    pvals.append(pval)
     print("Saving p-value to ", pval_file)
-    df = pd.DataFrame(pvals, columns=["p-value"])
+    df = pd.DataFrame(pval, columns=["p-value"])
     df.to_csv(pval_file)
 
-else:  # many .pkl files
+else:
     print("input_dir = ", input_dir)
     pvals = []
     file_list = list((glob.glob(input_dir + "/**.pkl")))
@@ -150,8 +148,9 @@ else:  # many .pkl files
         M = numbers_info['Modulus']
         numbers = numbers_info['numbers']
 
-        pval = np.mean(random_exc_test(numbers, M))
-        pvals.append(pval)
+        pval = random_exc_test(numbers, M)
+        for value in pval:
+            pvals.append(value)
 
     print("Saving p-values to ", pval_file)
     df = pd.DataFrame(pvals, columns=["p-value"])
