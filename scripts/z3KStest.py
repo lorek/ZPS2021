@@ -6,15 +6,13 @@ import glob
 def ParseArguments():
     parser = argparse.ArgumentParser(description="Kolmogorov–Smirnov test")
     parser.add_argument('--input-file', default="generated_numbers.pkl", required=False, help='input file (default: %(default)s)')
-    parser.add_argument('--input-dir', default="", required=False, help='input directory with .pkl files (default: %(default)s)')
+    parser.add_argument('--input-dir', default="pickles_dir", required=False, help='input directory with .pkl files (default: %(default)s)')
     parser.add_argument('--pval-file', default="p-values.csv", required=False, help='output file with p-values (default: %(default)s)')
     args = parser.parse_args()
 
     return args.input_file, args.input_dir, args.pval_file
 
 input_file, input_dir, pval_file = ParseArguments()
-
-numbers_info = pd.read_pickle(input_file)
 
 if input_dir=="":
     numbers_info = pd.read_pickle(input_file)

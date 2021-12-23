@@ -47,7 +47,7 @@ def Cusum(n, numbers_length, numbers):
 def ParseArguments():
     parser = argparse.ArgumentParser(description="Cumulative Sums Test")
     parser.add_argument('--input-file', default="generated_numbers.pkl", required=False, help='input file (default: %(default)s)')
-    parser.add_argument('--input-dir', default="", required=False, help='input directory with .pkl files (default: %(default)s)')
+    parser.add_argument('--input-dir', default="pickles_dir", required=False, help='input directory with .pkl files (default: %(default)s)')
     parser.add_argument('--pval-file', default="p-values.csv", required=False, help='output file with p-values (default: %(default)s)')
     args = parser.parse_args()
 

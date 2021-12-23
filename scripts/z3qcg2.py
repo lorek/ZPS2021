@@ -11,16 +11,16 @@ def ParseArguments():
     parser.add_argument('-a', default="2", required=False, help='parameter \'a\' in PRNG recursion (default: %(default)s)')
     parser.add_argument('-b', default="3", required=False, help='parameter \'b\' in PRNG recursion (default: %(default)s)')
     parser.add_argument('-c', default="1", required=False, help='parameter \'c\' in PRNG recursion (default: %(default)s)')
-    parser.add_argument('-M', required=False, help='Modulus \'M\' in PRNG recursion (default: 2^512)')
+    parser.add_argument('-M', required=False, help='Modulus \'M\' in PRNG recursion (default: 2^32)')
     parser.add_argument('--output-file', default="generated_numbers.pkl", required=False, help='output file (default: %(default)s)')
-    parser.add_argument('--seeds', default="", required=False, help='File (.csv) with seeds (default: %(default)s)')
-    parser.add_argument('--output-dir', default="", required=False, help='Directory to save .pkl files generated with seeds (default: %(default)s)')
+    parser.add_argument('--seeds', default="seeds.csv", required=False, help='File (.csv) with seeds (default: %(default)s)')
+    parser.add_argument('--output-dir', default="pickles_dir", required=False, help='Directory to save .pkl files generated with seeds (default: %(default)s)')
     
     args = parser.parse_args()
 
     return args.n, args.a, args.b, args.c, args.M, args.output_file, args.seeds, args.output_dir
 
-def QCG_II_Gen(n, seed, M = 2**512, a = 2, b = 3, c = 1):
+def QCG_II_Gen(n, seed, M = 2**32, a = 2, b = 3, c = 1):
     numbers = [0] * n
     numbers[0] = seed % M
     for i in range(1,n):
@@ -43,7 +43,7 @@ b = int(b)
 c = int(c)
 if M:
     M = int(M)
-else: M = 2**512
+else: M = 2**32
 
 if(output_dir!=""):
 	output_dir +="/"

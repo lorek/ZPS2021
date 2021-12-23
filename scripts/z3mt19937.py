@@ -8,8 +8,8 @@ def ParseArguments():
     parser.add_argument('-n', default="100", required=False, help='number of generated numbers (default: %(default)s)')
     parser.add_argument('-M', required=False, help='modulus \'M\' in PRNG (default: 2^64)')
     parser.add_argument('--output-file', default="generated_numbers.pkl", required=False, help='output file (default: %(default)s)')
-    parser.add_argument('--seeds', default="", required=False, help='file (.csv) with seeds  (default: %(default)s)')
-    parser.add_argument('--output-dir', default="", required=False, help='directory to save .pkl files generated with seeds (default: %(default)s)')
+    parser.add_argument('--seeds', default="seeds.csv", required=False, help='file (.csv) with seeds  (default: %(default)s)')
+    parser.add_argument('--output-dir', default="pickles_dir", required=False, help='directory to save .pkl files generated with seeds (default: %(default)s)')
     
     args = parser.parse_args()
 
