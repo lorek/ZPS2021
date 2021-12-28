@@ -1,9 +1,9 @@
 import math
 import scipy.special as spc
 import argparse
-import pickle
 import pandas as pd
 import numpy as np
+import glob
 
 
 def ParseArguments():
@@ -12,19 +12,18 @@ def ParseArguments():
                         required=False, help='input file (default: %(default)s)')
     parser.add_argument('--block_size', default=10,
                         required=False, help='block_size for frequency test within block (default: %(default)s)')
+    parser.add_argument('--input-dir', default="", required=False,
+                        help='input directory with .pkl files (default: %(default)s)')
+    parser.add_argument('--pval-file', default="p-values.csv", required=False,
+                        help='output file with p-values (default: %(default)s)')
 
     args = parser.parse_args()
 
-    return args.input_file, args.block_size
+    return args.input_file, args.block_size, args.input_dir, args.pval_file
 
 
-input_file, block_size = ParseArguments()
+input_file, block_size, input_dir, pval_file = ParseArguments()
 
-numbers_info = pd.read_pickle(input_file)
-n = int(numbers_info['n'])
-M = numbers_info['Modulus']
-numbers = numbers_info['numbers']
-block_size = int(block_size)
 
 
 def int_to_bin(num):
@@ -58,17 +57,52 @@ def block_frequency(bin_data: str, block_size):
         proportion_sum += pow(pi - 0.5, 2.0)  # suma( (pi-0.5)**2 )
         block_start += block_size
         block_end += block_size
-    chi_squared = 4.0 * block_size * proportion_sum
-    p_val = spc.gammaincc(num_blocks / 2, chi_squared / 2)
+    chi_squared = 2.0 * block_size * proportion_sum
+    p_val = spc.gammaincc(num_blocks / 2, chi_squared)
     return p_val
 
 
-if M != 2:
-    numbers = int_to_bin(numbers)
+if input_dir == "":  # one .pkl file
 
+    numbers_info = pd.read_pickle(input_file)
 
-print('FREQUENCY TEST WITHIN A BLOCK')
-print("n = ", n)
-print("M = ", M)
-print("5 first bits: ", numbers[:5])
-print('p-value: ', block_frequency(to_str(numbers), block_size))
+    prng_info = numbers_info['PRNG']
+
+    n = int(numbers_info['n'])
+
+    M = numbers_info['Modulus']
+
+    numbers = numbers_info['numbers']
+    if M != 2:
+        numbers = int_to_bin(numbers)
+
+    pval = block_frequency(numbers, block_size)
+
+    print("pval = ", np.round(pval, 5))
+    pvals = []
+    pvals.append(pval)
+    print("Saving p-value to ", pval_file)
+    df = pd.DataFrame(pvals, columns=["p-value"])
+    df.to_csv(pval_file)
+
+else:  # many .pkl files
+    print("input_dir = ", input_dir)
+    pvals = []
+    file_list = list((glob.glob(input_dir + "/**.pkl")))
+    file_list.sort()
+    for file_name in file_list:
+        print("Processing file ", file_name, " ...")
+        numbers_info = pd.read_pickle(file_name)
+
+        prng_info = numbers_info['PRNG']
+        n = int(numbers_info['n'])
+        M = numbers_info['Modulus']
+        numbers = numbers_info['numbers']
+        if M != 2:
+            numbers = int_to_bin(numbers)
+        pval = block_frequency(numbers, block_size)
+        pvals.append(pval)
+
+    print("Saving p-values to ", pval_file)
+    df = pd.DataFrame(pvals, columns=["p-value"])
+    df.to_csv(pval_file, index=False)
