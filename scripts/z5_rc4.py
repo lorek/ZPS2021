@@ -87,7 +87,7 @@ if len(seeds) == 1:
         print("Wygenerowane liczby zapisano w: ", output_file)
 
 else:  # jest wiecej seedow
-    # przygotujmy nazwe -- zostawiamy tekst przed ostatnia kropka (np. z "asdf.asf_afs.pkl" zostawi "asdfasf_afs")
+    # przygotujmy nazwe --- zostawiamy tekst przed ostatnia kropka (np. z "asdf.asf_afs.pkl" zostawi "asdfasf_afs")
     output_file_list = output_file.split(".")
     output_file_prefix = "".join(
         output_file_list[:(len(output_file_list) - 1)])

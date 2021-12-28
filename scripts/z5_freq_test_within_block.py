@@ -53,7 +53,7 @@ def block_frequency(bin_data: str, block_size):
         for char in block_data:
             if char == '1':
                 ones_count += 1
-        pi = ones_count / block_size  # pi - proporcja jedynek w jednym bloku
+        pi = ones_count / block_size  # pi -- proporcja jedynek w jednym bloku
         proportion_sum += pow(pi - 0.5, 2.0)  # suma( (pi-0.5)**2 )
         block_start += block_size
         block_end += block_size

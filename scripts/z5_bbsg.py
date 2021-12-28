@@ -69,7 +69,7 @@ if output_dir != "":
 if len(seeds) == 1:
     numbers = bbsg(n, x, y)
 
-    # jesli output_file jest pusty, to wyswietl liczby, w p.p. zapisz je do pliku
+    # jesli output_file jest pusty to wyswietl liczby, w p.p. zapisz je do pliku
 
     if output_file == "":
         print("Wygenerowane liczby: \n", bbsg)
