@@ -1,12 +1,7 @@
 """
 This code can be used to deserialize numbers stored in pickle and show histogram of them.
 Numbers are loaded from input-file, deserialized and written to output-file.
-
-Sample usage: 
-
 """
-
-
 import matplotlib.pyplot as plt
 import argparse
 import pandas as pd

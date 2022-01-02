@@ -10,7 +10,7 @@ Parameters:
     seed_file: txt file storing sequence of first 127 bits (used to generate whole sequence) 
 
 Sample usage: 
-python scripts/z1_XOR_gen.py --n 1000 --M 8 --seed-file 'z1_XORG_seed.txt' --output-file 'results/z1_XORG_numbers.pkl'
+python scripts/z1_XOR_gen.py --n 1000 --M 8 --seed-file 'data/z1_XORG_seed.txt' --output-file 'results/z1_XORG_numbers.pkl'
 '''
 import numpy as np
 import argparse

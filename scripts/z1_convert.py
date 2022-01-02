@@ -7,12 +7,8 @@ def is_power_of_two(n: int) -> bool:
 
 def bits_to_ints(bits: str, n: int) -> list:
     """Convert string representing bits into array of n integers."""
-    k = len(bits)/n # how many bits for each number?
-    if not is_power_of_two(k):
-        raise ValueError(f"Number of bits divided by n (now {k}) must be power of 2.")
-    else:
-        k = int(k)
-        return [int(bits[i:i+k],2) for i in range(0, len(bits)-k+1, k)]
+    k = int(len(bits)/n) # how many bits for each number?
+    return [int(bits[i:i+k],2) for i in range(0, len(bits)-k+1, k)]
 
 def ints_to_bits(ints: list, k: int) -> str:
     """Convert array of ints into string of bits (k bits for each number)"""

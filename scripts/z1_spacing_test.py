@@ -9,7 +9,7 @@ Output:
     p-value of test
 
 Sample usage: 
-python scripts/z1_spacing_test.py --input-file 'results/mt_numbers_int.pkl'
+python scripts/z1_spacing_test.py --input-file 'results/z1_XORG_numbers_int.pkl'
 """
 import numpy as np
 import argparse
