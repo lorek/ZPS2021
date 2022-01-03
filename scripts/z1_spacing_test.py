@@ -6,28 +6,32 @@ Input:
     PRNG info from `input_file` must contain key `int_range` which is maximum possible value of generated numbers (doesn't have to occur)
 
 Output:
-    p-value of test
+    p-value of a single test:       if `input_dir` is not provided
+    p-value from second-level test: if `input_dir` is provided (based on p-values from all files in input_dir)
 
 Sample usage: 
 python scripts/z1_spacing_test.py --input-file 'results/z1_XORG_numbers_int.pkl'
 """
 import numpy as np
+import pandas as pd
 import argparse
 import pandas as pd
 from scipy.stats import chi2
 from z1_convert import ints_to_floats
 from math import ceil
 from time import perf_counter as time
+import glob
 
 def ParseArguments():
     parser = argparse.ArgumentParser(description = "Spacing test")
     parser.add_argument('--input-file', default = "results/z1_XORG_numbers_int.pkl", required = False, help = 'Pickle file with generated numbers (default: %(default)s)')
-    parser.add_argument('--output-file', default = "test_results/spacing_XORG.txt", required = False, help = 'Where results will be stored? If not provided, results are not saved. (default: %(default)s)')
+    parser.add_argument('--input-dir', default = "results/z1_XORG_numbers_int", required = False, help = 'Directory with generated numbers (default: %(default)s)')
+    parser.add_argument('--output-file', default = "results/spacing_XORG.csv", required = False, help = 'Where results will be stored? If not provided, results are not saved. (default: %(default)s)')
     parser.add_argument('--alpha', default = "0", required = False, help = 'Beginning of interval (default: %(default)s)')
     parser.add_argument('--delta', default = "0.5", required = False, help = 'Width of interval (default: %(default)s)')
     
     args = parser.parse_args()
-    return args.input_file, args.output_file, float(args.alpha), float(args.delta)
+    return args.input_file, args.input_dir, args.output_file, float(args.alpha), float(args.delta)
 
 def get_spacings(floats: np.ndarray, a: float, b: float) -> list: # b > a
     """Calculate spacings for spacing test with numbering starting from 1 (C_1, ... C_k)"""
@@ -101,33 +105,27 @@ if __name__ == '__main__':
     test_functions()
 
     # Read data and show information about tested numbers
-    input_file, output_file, alpha, delta = ParseArguments()
-    print(f'Reading numbers from {input_file}...')
-    data = pd.read_pickle(input_file)
-    numbers = data.pop('numbers') 
-    print(f"Numbers info: {data}")
-    print(f"First 5 numbers: {numbers[:5]}")
-    max_int = data["max_int"]
-    print(f"Numbers are from 0, ... {max_int}.\nRunning spacing test...\n")
-
-    # Run test and show result
+    input_file, input_dir, output_file, alpha, delta = ParseArguments()
+    # Create list of test files (if input_dir is not provided, put there just one file)
+    if input_dir != "":
+        file_list = list((glob.glob(input_dir + "/**.pkl")))
+        file_list.sort()
+    else:
+        file_list = [input_file]
+    
+    # Run multiple tests
+    pvals = []
     start = time()
-    result = spacing_test(numbers, max_int, alpha, delta)
+    for input_file in file_list:
+        print(f'Reading numbers from {input_file}...')
+        data = pd.read_pickle(input_file)
+        numbers = data.pop('numbers')
+        max_int = data["max_int"]
+        print(f"Numbers are from 0, ... {max_int}.\nRunning spacing test...\n")
+        pvals.append(spacing_test(numbers, max_int, alpha, delta))
+
     time = time() - start
-
-    summary = {
-        "test": "spacing",
-        "input_file": input_file,
-        "alpha": alpha,
-        "delta": delta,
-        "p-value": result
-    }
-    print(f'p-value: {result}')
-    print(f'running time: {time:.3}s')
-
-    # Save summary
-    if (output_file):
-        out = open(output_file, "w")
-        out.write(str(summary))
-        print(f"\nSummary of test can be found in {output_file}.")
-        out.close()
+    print(f"Finished test on {len(file_list)} files in {time:.3f}s")
+    pvals_dtf = pd.DataFrame(pvals,columns=["p-value"])
+    pvals_dtf.to_csv(output_file, index = False)
+    print(f"p-values are saved in {output_file}.")

@@ -1,4 +1,5 @@
 from math import ceil, floor, log2
+from typing import Iterable
 import numpy as np
 
 def is_power_of_two(n: int) -> bool:
@@ -13,6 +14,8 @@ def bits_to_ints(bits: str, n: int) -> list:
 def ints_to_bits(ints: list, k: int) -> str:
     """Convert array of ints into string of bits (k bits for each number)"""
     bits = ''
+    if ints is not Iterable:
+        ints = [ints]
     for x in ints:
         bits += format(x, "b").zfill(k)
     return bits

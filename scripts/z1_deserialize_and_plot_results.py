@@ -9,7 +9,7 @@ from time import perf_counter as time
 
 def ParseArguments():
     parser = argparse.ArgumentParser(description="Load generated numbers from pickle")
-    parser.add_argument('--input-file', default = 'results/z1_XORG_numbers_int.pkl', required = False, help = 'File with numbers stored as pickle (default: %(default)s)')
+    parser.add_argument('--input-file', default = 'results/z1_XORG_numbers_int/z1_XORG_numbers_int_0.pkl', required = False, help = 'File with numbers stored as pickle (default: %(default)s)')
     parser.add_argument('--output-file', default = 'deserialized_numbers.txt', required = False, help = 'Output file (default: %(default)s)')
     parser.add_argument('--bins', required = False, help = 'Number of bins in histogram (default: %(default)s)')
     
