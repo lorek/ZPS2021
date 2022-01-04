@@ -54,9 +54,8 @@ def ran_exc_var(numbers, nr_digits):
     return p_values_list
 
 
-#tworzenie dataframe dla p wartosci
-df = {'p-9': [], 'p-8': [],'p-7': [], 'p-6': [], 'p-5': [], 'p-4': [], 'p-3': [], 'p-2': [], 'p-1': [], 'p+1': [], 'p+2': [], 'p+3': [], 'p+4': [], 'p+5': [], 'p+6': [], 'p+7': [],'p+8': [], 'p+9': []}
-p_values_df = pd.DataFrame(data=df)
+#tworzenie listy dla p-wartosci
+p_values_list = []
 
 #wyznaczanie p-wartosci
 
@@ -65,16 +64,13 @@ if(input_dir == ""):
     numbers_info = pd.read_pickle(input_file)
     M = numbers_info["Modulus"]
     numbers = numbers_info['numbers']
-
     nr_digits = int(np.log2(M))
 
-    p_values = ran_exc_var(numbers, nr_digits)
-    p_values_df.loc[len(p_values_df)] = p_values
+    p_values_list += ran_exc_var(numbers, nr_digits)
 
 #gdy z folderu
 else:
     files = os.listdir(input_dir)
-
     if (input_dir != ""):
         if (platform.system() == "Windows"):
             input_dir += "\\"
@@ -87,14 +83,14 @@ else:
         numbers = numbers_info['numbers']
         nr_digits = int(np.log2(M))
 
-        p_values = ran_exc_var(numbers, nr_digits)
-        p_values_df.loc[len(p_values_df)] = p_values
+        p_values_list += ran_exc_var(numbers, nr_digits)
 
 
 #zapiswanie do pliku lub wyswietlanie
 if output_file == "":
     print("Otrzymane p-wartosci: \n")
-    print(p_values_df)
+    print(p_values_list)
 else:
+    p_values_df = pd.DataFrame(p_values_list, columns=["p-value"])
     p_values_df.to_csv(output_file, index=False)
     print("P-wartosci zapisano w: ", output_file)
