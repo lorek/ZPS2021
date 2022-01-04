@@ -3,6 +3,7 @@ import argparse
 import pandas as pd
 import numpy as np
 import glob
+from scipy.stats import poisson
 
 
 def ParseArguments():
@@ -36,8 +37,7 @@ def bday_spac_test(M, numbers):
     K = abs(len(set(space)) - n)
     l = n**3/(4*M)
 
-    def f(j): return (l**j/math.factorial(j))*math.e**(-l)
-    p = 1 - sum([f(j) for j in range(K)])
+    p = 1 - poisson.cdf(K-0.01*K, l)
 
     return(p)
 
