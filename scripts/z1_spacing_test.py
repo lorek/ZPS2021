@@ -26,7 +26,7 @@ def ParseArguments():
     parser = argparse.ArgumentParser(description = "Spacing test")
     parser.add_argument('--input-file', default = "results/z1_XORG_numbers_int.pkl", required = False, help = 'Pickle file with generated numbers (default: %(default)s)')
     parser.add_argument('--input-dir', default = "results/z1_XORG_numbers_int", required = False, help = 'Directory with generated numbers (default: %(default)s)')
-    parser.add_argument('--output-file', default = "results/spacing_XORG.csv", required = False, help = 'Where results will be stored? If not provided, results are not saved. (default: %(default)s)')
+    parser.add_argument('--output-file', default = "results/spacing_XORG_pvalues.csv", required = False, help = 'Where results will be stored? If not provided, results are not saved. (default: %(default)s)')
     parser.add_argument('--alpha', default = "0", required = False, help = 'Beginning of interval (default: %(default)s)')
     parser.add_argument('--delta', default = "0.5", required = False, help = 'Width of interval (default: %(default)s)')
     
