@@ -56,11 +56,6 @@ def PokerTest(n):
         print('The sequence is not random')
 
     p_value = chi2.sf(X2, 3)
-    print(p_value)
-    print(X2)
-    print(X2theoretical)
-    print(list_s)
-
     return (p_value)
 
 
