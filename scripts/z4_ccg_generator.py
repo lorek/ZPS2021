@@ -7,7 +7,7 @@ import numpy as np
 
 
 def ParseArguments():
-    parser = argparse.ArgumentParser(description="QCG II PRNG")
+    parser = argparse.ArgumentParser(description="CCG PRNG")
     parser.add_argument('--n', default="1000", required=False, help='number of generated numbers (default: %(default)s)')
     parser.add_argument('--a', default="2", required=False,
                         help='parameter \'a\' in PRNG recursion (default: %(default)s)')
@@ -61,7 +61,7 @@ if len(seeds) == 1:
     if output_file == "":
         print("Wygenerowane liczby: \n", ccg1)
     else:
-        data = {'PRNG': "QCG II: a=" + str(a),
+        data = {'PRNG': "CCG: a=" + str(a),
                 'Modulus': M,
                 'n': n,
                 'numbers': ccg1}
@@ -79,7 +79,7 @@ else:  # jest wiecej seedow
 
         output_file = output_dir + output_file_prefix + "_seed_" + str(nr) + ".pkl"
 
-        data = {'PRNG': "QCG II: a=" + str(a),
+        data = {'PRNG': "CCG: a=" + str(a),
                 'Modulus': M,
                 'n': n,
                 'numbers': ccg1}
