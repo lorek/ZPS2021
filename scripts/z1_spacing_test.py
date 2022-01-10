@@ -25,8 +25,8 @@ import glob
 def ParseArguments():
     parser = argparse.ArgumentParser(description = "Spacing test")
     parser.add_argument('--input-file', default = "results/z1_XORG_numbers_int.pkl", required = False, help = 'Pickle file with generated numbers (default: %(default)s)')
-    parser.add_argument('--input-dir', default = "results/z1_XORG_numbers_int", required = False, help = 'Directory with generated numbers (default: %(default)s)')
-    parser.add_argument('--output-file', default = "results/spacing_XORG_pvalues.csv", required = False, help = 'Where results will be stored? If not provided, results are not saved. (default: %(default)s)')
+    parser.add_argument('--input-dir', default = "results/z2_fibo_gen_numbers", required = False, help = 'Directory with generated numbers (default: %(default)s)')
+    parser.add_argument('--output-file', default = "results/spacing_z2_fibo_pvalues.csv", required = False, help = 'Where results will be stored? If not provided, results are not saved. (default: %(default)s)')
     parser.add_argument('--alpha', default = "0", required = False, help = 'Beginning of interval (default: %(default)s)')
     parser.add_argument('--delta', default = "0.5", required = False, help = 'Width of interval (default: %(default)s)')
     
@@ -120,7 +120,18 @@ if __name__ == '__main__':
         print(f'Reading numbers from {input_file}...')
         data = pd.read_pickle(input_file)
         numbers = data.pop('numbers')
-        max_int = data["max_int"]
+        try:
+            max_int = data["max_int"]
+        except KeyError:
+            if "Modulus" in data:
+                m = data["Modulus"]
+            elif "M" in data:
+                m = data["M"]
+            else:
+                print(f"Data contains following keys: {data.keys()}. Cannot find info about max possible number.")
+                raise
+            max_int = 2^m - 1
+        
         print(f"Numbers are from 0, ... {max_int}.\nRunning spacing test...\n")
         pvals.append(spacing_test(numbers, max_int, alpha, delta))
 
