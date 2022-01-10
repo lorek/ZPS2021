@@ -80,6 +80,7 @@ if __name__ == '__main__':
         data = {
             'PRNG': 'XORG', 
             'n' : n, 
+            'Modulus': M,
             'max_int': 2**M - 1, 
             'seed': seed, 
             'numbers': numbers
