@@ -10,9 +10,9 @@ def ParseArguments():
     parser = argparse.ArgumentParser(description="Test for the longest runs in block")
     parser.add_argument('--input-file', default="generated_numbers.pkl", required=False,
                         help='output file (default: %(default)s)')
-    parser.add_argument('--input-dir', default="numbers", required=False,
+    parser.add_argument('--input-dir', default="mt19937_numbers", required=False,
                         help='input directory with .pkl files (default: %(default)s)')
-    parser.add_argument('--pval-file', default="p-values.csv", required=False,
+    parser.add_argument('--pval-file', default="lon_ones-mt19937.csv", required=False,
                         help='output file with p-values (default: %(default)s)')
     args = parser.parse_args()
 
@@ -197,7 +197,7 @@ else:  # many .pkl files
     for file_name in file_list:
         print("Processing file ", file_name, " ...")
 
-        numbers_info = pd.read_pickle(input_file)
+        numbers_info = pd.read_pickle(file_name)
 
         prng_info = numbers_info['PRNG']
         n = int(numbers_info['n'])
