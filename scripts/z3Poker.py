@@ -84,7 +84,7 @@ if input_dir=="":
     M = int(numbers_info['Modulus'])
     numbers_length = (M-1).bit_length() # długość liczb binarnie
     numbers = numbers_info['numbers']   # liczby (pseudolosowe)
-    p_value = PokerTest(n)  # p-wartość
+    p_value = PokerTest(numbers)  # p-wartość
 
     print('Poker test results: ')
     print('p-value: ', str(p_value))
@@ -110,7 +110,7 @@ else:
         M = numbers_info['Modulus']
         numbers = numbers_info['numbers']
         numbers_length = (M - 1).bit_length()
-        pval = PokerTest(n)
+        pval = PokerTest(numbers)
         pvals.append(pval)
 
     print("Saving p-values to ", pval_file)
