@@ -12,7 +12,7 @@ def ParseArguments():
     parser.add_argument('--seeds', default="sample_seeds.csv", required=False,
                         help='File (.csv) with seeds  (''default: %(default)s)')
     parser.add_argument('--M', required=False,
-                        help='Modulus \'M\' in PRNG recursion (default: 2**32)')
+                        help='Modulus \'M\' in PRNG recursion (default: 2**10)')
     parser.add_argument('--output-file', default="generated_numbers.pkl", required=False,
                         help='output file (default: ''%(default)s)')
     parser.add_argument('--output-dir', default="numbers", required=False,
@@ -22,7 +22,7 @@ def ParseArguments():
     return args.n, args.seeds, args.M, args.output_file, args.output_dir
 
 
-def fibo_random_gen(n, seed1, M=2**32):
+def fibo_random_gen(n, seed1, M=2**10):
     numbers = [0] * (n+2)
     numbers[0] = seed1
     numbers[1] = seed1 % M
@@ -38,7 +38,7 @@ n = int(n)
 if M:
     M = int(M)
 else:
-    M = 2**32
+    M = 2**10
 
 if seeds_file != "":
     print("ASDF")
