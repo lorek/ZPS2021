@@ -40,10 +40,7 @@ def test(numbers, m=9, N=5):
     # numbers = list(numbers)
     str_of_bits = ints_into_bits(numbers)
     length = len(str_of_bits) # n
-    template = "001101101"
-    # template = "101100111"
-    # 001101101
-    # template = format(random.getrandbits(m), "b").zfill(m)
+    template = format(random.getrandbits(m), "b").zfill(m)
     print("B = ", template)
     print("N = ", N)
     print("m = ", m)
@@ -74,7 +71,7 @@ def test(numbers, m=9, N=5):
     for j in range(1, N):
         chi_sq = chi_sq + pow((float(w_j[j]) - mi), 2) / variance
 
-    p_value = mpmath.gammainc(N / 2, chi_sq / 2)
+    p_value = (1/math.gamma(N/2)) * mpmath.gammainc(N / 2, chi_sq / 2)
     print("Statystyka chi-kwadrat = ", chi_sq)
     return round(p_value, 5)
 
